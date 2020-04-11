@@ -5,7 +5,7 @@ import 'package:flutter_app/services/authService.dart';
 
 class MainScreen extends StatefulWidget {
   final FirebaseUser firebaseUser;
-
+  User user;
   MainScreen({this.firebaseUser});
 
   _MainScreenState createState() => _MainScreenState();
@@ -17,74 +17,128 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    print(widget.firebaseUser);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: new AppBar(
-        elevation: 0.5,
-        leading: new IconButton(
-            icon: new Icon(Icons.menu),
-            onPressed: () => _scaffoldKey.currentState.openDrawer()),
-        title: Text("Home"),
-        centerTitle: true,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('Drawer Header'),
-            ),
-            ListTile(
-              title: Text('Log Out'),
-              onTap: () {
-                _logOut();
-                _scaffoldKey.currentState.openEndDrawer();
-              },
-            ),
-          ],
-        ),
-      ),
-      body: StreamBuilder(
-        stream: Auth.getUser(widget.firebaseUser.uid),
-        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(
-                valueColor: new AlwaysStoppedAnimation<Color>(
-                  Color.fromRGBO(212, 20, 15, 1.0),
+    return  new StreamBuilder<User>(
+      stream: Auth.getUser( widget.firebaseUser.uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return new Container(
+            color: Colors.white,
+          );
+        } else {
+          if (snapshot.hasData) {
+            widget.user = snapshot.data;
+            return  Scaffold(
+              key: _scaffoldKey,
+              appBar: new AppBar(
+                elevation: 0.5,
+                leading: new IconButton(
+                    icon: new Icon(Icons.menu),
+                    onPressed: () => _scaffoldKey.currentState.openDrawer()),
+                title: Text("Flutter App"),
+                centerTitle: true,
+              ),
+              drawer: Drawer(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    DrawerHeader(
+                      child:  Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Row(
+                              children: <Widget> [
+                                CircleAvatar(
+                                  backgroundImage: AssetImage("assets/images/default.png"),
+                                ),
+                                Text("Name: ${widget.user.firstName}"),
+
+                              ]),
+                          Container(
+                            child: Text("${widget.user.email}"),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    ListTile(
+                      title: Text('Log Out'),
+                      onTap: () {
+                        _logOut();
+                        _scaffoldKey.currentState.openEndDrawer();
+                      },
+                    ),
+                  ],
                 ),
+              ),
+              body: StreamBuilder(
+                stream: Auth.getUser(widget.user.userID),
+                builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+                  print("snapshot " + snapshot.toString() + "---------------");
+                  if (!snapshot.hasData) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          valueColor: new AlwaysStoppedAnimation<Color>(
+                            Color.fromRGBO(212, 20, 15, 1.0),
+                          ),
+                        ),
+                      );
+                  } else {
+                    return DefaultTabController(
+                      length: 3,
+                      child: new Scaffold(
+                        body: TabBarView(
+                          children: [
+                            new Container(
+                              color: Colors.yellow,
+                            ),
+                            new Container(color: Colors.orange,),
+                            new Container(
+                              color: Colors.lightGreen,
+                            ),
+
+                          ],
+                        ),
+                        bottomNavigationBar: new TabBar(
+                          tabs: [
+                            Tab(
+                              icon: new Icon(Icons.list),
+                            ),
+                            Tab(
+                              icon: new Icon(Icons.mail),
+                            ),
+                            Tab(
+                              icon: new Icon(Icons.person),
+                            ),
+
+                          ],
+                          labelColor: Colors.blue,
+                          unselectedLabelColor: Colors.blueGrey,
+
+                        ),
+                        backgroundColor: Colors.white,
+                      ),
+                    );
+                  }
+                },
               ),
             );
           } else {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    height: 100.0,
-                    width: 100.0,
-                    child: CircleAvatar(
-                      backgroundImage: (snapshot.data.profilePictureURL != '')
-                          ? NetworkImage(snapshot.data.profilePictureURL)
-                          : AssetImage("assets/images/default.png"),
-                    ),
-                  ),
-                  Text("Name: ${snapshot.data.firstName}"),
-                  Text("Email: ${snapshot.data.email}"),
-                  Text("UID: ${snapshot.data.userID}"),
-                ],
-              ),
-            );
+            return Scaffold();
           }
-        },
-      ),
+        }
+      },
     );
+
+
+
+
+
+
   }
 
   void _logOut() async {

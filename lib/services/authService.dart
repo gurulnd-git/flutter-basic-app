@@ -115,6 +115,11 @@ class Auth {
     }
   }
 
+ static Future<String> currentUser() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    return user.uid;
+  }
+
   static Stream<User> getUser(String userID) {
     return Firestore.instance
         .collection("users")

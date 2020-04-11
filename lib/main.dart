@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/auth/SignUp.dart';
 import 'package:flutter_app/screens/auth/landingPage.dart';
@@ -7,11 +8,13 @@ import 'package:flutter_app/screens/auth/phoneVerification.dart';
 import 'package:flutter_app/screens/auth/signIn.dart';
 import 'package:flutter_app/screens/main_screen.dart';
 import 'package:flutter_app/screens/walkthrough.dart';
+import 'package:flutter_app/services/authService.dart';
 import 'package:flutter_app/shared/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  // Firestore.instance.settings(timestampsInSnapshotsEnabled: true);
+void main()  async {
+   // Firestore.instance.settings(timestampsInSnapshotsEnabled: true);
+
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences.setMockInitialValues({});
   SharedPreferences.getInstance().then((prefs) {
@@ -47,6 +50,7 @@ class MyApp extends StatelessWidget {
   }
 
   Widget _screenHandler() {
+    print(prefs.getBool('seen')); print( " ssssssssssssssssssssssssssssssssssssssssssssss");
     bool seen = (prefs.getBool('seen') ?? false);
     if (seen) {
       return new LandingPage();

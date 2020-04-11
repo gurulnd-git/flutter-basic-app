@@ -206,7 +206,18 @@ class _SignInScreenState extends State<SignIn> {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         _changeBlackVisible();
         await Auth.signIn(email, password)
-            .then((uid) => Navigator.of(context).pop());
+            .then((uid) => {
+            Auth.getCurrentFirebaseUser().then((firebaseUser) {
+                  User user = new User(
+                    firstName: firebaseUser.displayName,
+                    userID: firebaseUser.uid,
+                    email: firebaseUser.email ?? '',
+                    profilePictureURL: firebaseUser.photoUrl ?? '',
+                  );
+                  Auth.addUser(user);
+                  Navigator.of(context).pop();
+                }),
+            Navigator.of(context).pop() });
       } catch (e) {
         print("Error in email sign in: $e");
         String exception = Auth.getExceptionText(e);
