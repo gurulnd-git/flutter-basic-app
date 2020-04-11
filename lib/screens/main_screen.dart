@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_app/models/user.dart';
+import 'package:flutter_app/screens/profileScreen.dart';
+import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/services/authService.dart';
 
 class MainScreen extends StatefulWidget {
@@ -35,45 +37,9 @@ class _MainScreenState extends State<MainScreen> {
               key: _scaffoldKey,
               appBar: new AppBar(
                 elevation: 0.5,
-                leading: new IconButton(
-                    icon: new Icon(Icons.menu),
-                    onPressed: () => _scaffoldKey.currentState.openDrawer()),
                 title: Text("Flutter App"),
+                automaticallyImplyLeading: false,
                 centerTitle: true,
-              ),
-              drawer: Drawer(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: <Widget>[
-                    DrawerHeader(
-                      child:  Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Row(
-                              children: <Widget> [
-                                CircleAvatar(
-                                  backgroundImage: AssetImage("assets/images/default.png"),
-                                ),
-                                Text("Name: ${widget.user.firstName}"),
-
-                              ]),
-                          Container(
-                            child: Text("${widget.user.email}"),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    ListTile(
-                      title: Text('Log Out'),
-                      onTap: () {
-                        _logOut();
-                        _scaffoldKey.currentState.openEndDrawer();
-                      },
-                    ),
-                  ],
-                ),
               ),
               body: StreamBuilder(
                 stream: Auth.getUser(widget.user.userID),
@@ -93,14 +59,9 @@ class _MainScreenState extends State<MainScreen> {
                       child: new Scaffold(
                         body: TabBarView(
                           children: [
-                            new Container(
-                              color: Colors.yellow,
-                            ),
+                            HomeScreen(),
                             new Container(color: Colors.orange,),
-                            new Container(
-                              color: Colors.lightGreen,
-                            ),
-
+                           ProfileScreen(),
                           ],
                         ),
                         bottomNavigationBar: new TabBar(
@@ -126,6 +87,7 @@ class _MainScreenState extends State<MainScreen> {
                   }
                 },
               ),
+
             );
           } else {
             return Scaffold();
@@ -141,7 +103,4 @@ class _MainScreenState extends State<MainScreen> {
 
   }
 
-  void _logOut() async {
-    Auth.signOut();
-  }
 }
