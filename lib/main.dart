@@ -50,12 +50,11 @@ class MyApp extends StatelessWidget {
   }
 
   Widget _screenHandler() {
-    print(prefs.getBool('seen')); print( " ssssssssssssssssssssssssssssssssssssssssssssss");
     bool seen = (prefs.getBool('seen') ?? false);
     if (seen) {
-      return new LandingPage();
+      return LandingPage();
     } else {
-      return new WalkthroughScreen(prefs: prefs);
+      return WalkthroughScreen(prefs: prefs);
     }
   }
 }
