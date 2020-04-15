@@ -14,10 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main()  async {
    // Firestore.instance.settings(timestampsInSnapshotsEnabled: true);
-
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences.setMockInitialValues({});
-  SharedPreferences.getInstance().then((prefs) {
+  await SharedPreferences.getInstance().then((prefs) {
     runApp(MyApp(prefs: prefs));
   });
 }
@@ -45,7 +43,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: _screenHandler(),
-
     );
   }
 

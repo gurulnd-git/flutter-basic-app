@@ -215,9 +215,9 @@ class _SignInScreenState extends State<SignIn> {
                     profilePictureURL: firebaseUser.photoUrl ?? '',
                   );
                   Auth.addUser(user);
-                  Navigator.of(context).pop();
                 }),
-            Navigator.of(context).pop() });
+        Navigator.of(context).pushNamed("/root")
+           });
       } catch (e) {
         print("Error in email sign in: $e");
         String exception = Auth.getExceptionText(e);

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_app/models/user.dart';
+import 'package:flutter_app/screens/jobListWidget.dart';
+import 'package:flutter_app/screens/postJobs.dart';
 import 'package:flutter_app/screens/profileScreen.dart';
 import 'package:flutter_app/screens/home.dart';
 import 'package:flutter_app/services/authService.dart';
@@ -13,31 +15,53 @@ class MainScreen extends StatefulWidget {
   User user;
   MainScreen({this.firebaseUser});
 
+  final _appBarTitles = [
+    Text("Jobs"),
+    Text("Post Jobs"),
+    Text("Profile"),
+  ];
+
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   StreamController<int> _countController = StreamController<int>();
+  int _selectedIndex;
+  List<Widget> _pages;
+
   @override
   void initState() {
+    _selectedIndex = 0;
+    _pages = [
+      Dashboard(),
+      PostJob(),
+      Scaffold(),
+    ];
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return  new StreamBuilder<User>(
-      stream: Auth.getUser( widget.firebaseUser.uid),
-      builder: (context, snapshot) {
-        int _currentIndex = 0;
-        int _tabBarCount = 0;
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return new Container(
-            color: Colors.white,
-          );
-        } else {
-          if (snapshot.hasData) {
-            widget.user = snapshot.data;
+    Widget profileIcon = Icon(Icons.account_circle);
+//    if (user != null) {
+//      profileIcon =
+//          CircleAvatar(backgroundImage: NetworkImage(user.avatar), radius: 12);
+//    }
+
+
+//    return  new StreamBuilder<User>(
+//      stream: Auth.getUser( widget.firebaseUser.uid),
+//      builder: (context, snapshot) {
+//        int _currentIndex = 0;
+//        int _tabBarCount = 0;
+//        if (snapshot.connectionState == ConnectionState.waiting) {
+//          return new Container(
+//            color: Colors.white,
+//          );
+//        } else {
+//          if (snapshot.hasData) {
+//            widget.user = snapshot.data;
             return  Scaffold(
               key: _scaffoldKey,
               appBar: new AppBar(
@@ -45,21 +69,37 @@ class _MainScreenState extends State<MainScreen> {
                 leading: new IconButton(
                     icon: new Icon(Icons.menu),
                     onPressed: () => _scaffoldKey.currentState.openDrawer()),
-                title: Text("Flutter App"),
+                title: widget._appBarTitles[_selectedIndex],
                 automaticallyImplyLeading: false,
                 actions: <Widget>[
-                  FlatButton.icon( icon: StreamBuilder(
-                    initialData: _tabBarCount,
-                    stream: _countController.stream,
-                    builder: (_, snapshot) => BadgeIcon(
-                      icon: Icon(Icons.turned_in, size: 25, color: Colors.white),
-                      badgeCount: 2, // set the notification item value
-                    ),
-                  ), label: Text(""),
-//                  onPressed: {
-//                    Navigator.of(context).pushNamed("/phonesignin");
-//                  },
-                   )
+              Padding(
+                      padding: EdgeInsets.only(right: 10.0),
+                      child: IconButton(
+                      icon: Icon(Icons.settings),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed("/profile");
+                      })
+              ),
+//                  Padding(
+//                      padding: EdgeInsets.only(right: 10.0),
+//                      child: IconButton(
+//                          icon: Icon(Icons.help),
+//                          onPressed: () {
+//                            Navigator.of(context).pushNamed("/about");
+//                          })),
+
+//                  FlatButton.icon( icon: StreamBuilder(
+//                    initialData: _tabBarCount,
+//                    stream: _countController.stream,
+//                    builder: (_, snapshot) => BadgeIcon(
+//                      icon: Icon(Icons.turned_in, size: 25, color: Colors.white),
+//                      badgeCount: 2, // set the notification item value
+//                    ),
+//                  ), label: Text(""),
+////                  onPressed: {
+////                    Navigator.of(context).pushNamed("/phonesignin");
+////                  },
+//                   )
                 ],
               ),
               drawer: Drawer(
@@ -109,78 +149,89 @@ class _MainScreenState extends State<MainScreen> {
                   ],
                 ),
               ),
-              body: StreamBuilder(
-                stream: Auth.getUser(widget.user.userID),
-                builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-                  print("snapshot " + snapshot.toString() + "---------------");
-                  if (!snapshot.hasData) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          valueColor: new AlwaysStoppedAnimation<Color>(
-                            Color.fromRGBO(212, 20, 15, 1.0),
-                          ),
-                        ),
-                      );
-                  } else {
-                    return DefaultTabController(
-                      length: 4,
-                      child: new Scaffold(
-                        body: TabBarView(
-                          children: [
-                            HomeScreen(),
-                            new Container(color: Colors.orange,),
-                            BadgeIcon(icon: Icon(
-                                Icons.chat, size: 25),// for inside page
-                              badgeCount: 4),
-                            SettingsScreen(),
-                          ],
-                        ),
-                        bottomNavigationBar: new TabBar(
-                          tabs: [
-                            Tab(
-                              icon: new Icon(Icons.dashboard),
-                            ),
-                            Tab(
-                              icon: new Icon(Icons.mail),
-                            ),
-                            Tab(
-                              icon: StreamBuilder(
-                                initialData: _tabBarCount,
-                                builder: (_, snapshot) => BadgeIcon(
-                                  icon: Icon(Icons.forum, size: 25),
-                                  badgeCount: 4, // set the notification item value
-                                ),
-                              ),
-                            ),
-                            Tab(
-                              icon: new Icon(Icons.settings),
-                            ),
-
-                          ],
-                          labelColor: Colors.blue,
-                          unselectedLabelColor: Colors.blueGrey,
-
-                        ),
-                        backgroundColor: Colors.white,
-                      ),
-                    );
-                  }
+//              body: StreamBuilder(
+//                stream: Auth.getUser(widget.user.userID),
+//                builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+//                  print("snapshot " + snapshot.toString() + "---------------");
+//                  if (!snapshot.hasData) {
+//                      return Center(
+//                        child: CircularProgressIndicator(
+//                          valueColor: new AlwaysStoppedAnimation<Color>(
+//                            Color.fromRGBO(212, 20, 15, 1.0),
+//                          ),
+//                        ),
+//                      );
+//                  } else {
+//                    return DefaultTabController(
+//                      length: 4,
+//                      child: new Scaffold(
+//                        body: TabBarView(
+//                          children: [
+//                            HomeScreen(),
+//                            new Container(color: Colors.orange,),
+//                            BadgeIcon(icon: Icon(
+//                                Icons.chat, size: 25),// for inside page
+//                              badgeCount: 4),
+//                            SettingsScreen(),
+//                          ],
+//                        ),
+//                        bottomNavigationBar: new TabBar(
+//                          tabs: [
+//                            Tab(
+//                              icon: new Icon(Icons.dashboard),
+//                            ),
+//                            Tab(
+//                              icon: new Icon(Icons.mail),
+//                            ),
+//                            Tab(
+//                              icon: StreamBuilder(
+//                                initialData: _tabBarCount,
+//                                builder: (_, snapshot) => BadgeIcon(
+//                                  icon: Icon(Icons.forum, size: 25),
+//                                  badgeCount: 4, // set the notification item value
+//                                ),
+//                              ),
+//                            ),
+//                            Tab(
+//                              icon: new Icon(Icons.settings),
+//                            ),
+//
+//                          ],
+//                          labelColor: Colors.blue,
+//                          unselectedLabelColor: Colors.blueGrey,
+//
+//                        ),
+//                        backgroundColor: Colors.white,
+//                      ),
+//                    );
+//                  }
+//                },
+//              ),
+            body:  IndexedStack(
+              children: _pages,
+              index: _selectedIndex,
+            ),
+              bottomNavigationBar: BottomNavigationBar(
+                type: BottomNavigationBarType.fixed,
+                currentIndex: _selectedIndex,
+                onTap: (int index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
                 },
+                items: [
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.home), title: Text("Home")),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.today, size: 25),
+                      title: Text("Post Jobs")),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.person), title: Text("Account")),
+                ],
               ),
 
+
             );
-          } else {
-            return Scaffold();
-          }
+
         }
-      },
-    );
-
-
-
-
-
-
-  }
-
-}
+      }
