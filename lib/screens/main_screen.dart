@@ -39,11 +39,22 @@ class _MainScreenState extends State<MainScreen> {
       ProfilePage(),
     ];
     super.initState();
+
+
   }
 
   @override
   Widget build(BuildContext context) {
     Widget profileIcon = Icon(Icons.account_circle);
+    Auth.getCurrentFirebaseUser().then((user) =>{
+    //user.isEmailVerified
+      Auth.getUser(user.uid).listen((user)=>{
+          if(user.role == "" || user.role == null) {
+          print("nnew user doesn't update details")
+
+          }
+    })
+  });
 //    if (user != null) {
 //      profileIcon =
 //          CircleAvatar(backgroundImage: NetworkImage(user.avatar), radius: 12);

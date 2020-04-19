@@ -17,10 +17,12 @@ class _SignUpScreenState extends State<SignUp> {
   final TextEditingController _number = new TextEditingController();
   final TextEditingController _email = new TextEditingController();
   final TextEditingController _password = new TextEditingController();
+  final TextEditingController _confirmPassword = new TextEditingController();
   CustomTextField _nameField;
   CustomTextField _phoneField;
   CustomTextField _emailField;
   CustomTextField _passwordField;
+  CustomTextField _confirmPasswordField;
   bool _blackVisible = false;
   VoidCallback onBackPress;
 
@@ -29,6 +31,7 @@ class _SignUpScreenState extends State<SignUp> {
     super.initState();
 
     onBackPress = () {
+      print("pop");
       Navigator.of(context).pop();
     };
 
@@ -65,6 +68,15 @@ class _SignUpScreenState extends State<SignUp> {
       controller: _password,
       obscureText: true,
       hint: "Password",
+      validator: TextValidator.validatePassword,
+    );
+    _confirmPasswordField = CustomTextField(
+      baseColor: Colors.grey,
+      borderColor: Colors.grey[400],
+      errorColor: Colors.red,
+      controller: _confirmPassword,
+      obscureText: true,
+      hint: "Confirm Password",
       validator: TextValidator.validatePassword,
     );
   }
@@ -105,17 +117,18 @@ class _SignUpScreenState extends State<SignUp> {
                     Padding(
                       padding:
                       EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
-                      child: _phoneField,
-                    ),
-                    Padding(
-                      padding:
-                      EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
                       child: _emailField,
                     ),
                     Padding(
                       padding:
                       EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
                       child: _passwordField,
+                    ),
+
+                    Padding(
+                      padding:
+                      EdgeInsets.only(top: 10.0, left: 15.0, right: 15.0),
+                      child: _confirmPasswordField,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
@@ -126,11 +139,36 @@ class _SignUpScreenState extends State<SignUp> {
                         fontWeight: FontWeight.w700,
                         textColor: Colors.white,
                         onPressed: () {
-                          _signUp(
-                              fullname: _fullname.text,
-                              email: _email.text,
-                              number: _number.text,
-                              password: _password.text);
+                          print("hellow");
+                          User newUser =  new User();
+                          newUser.fullName = _fullname.text;
+                          newUser.email = _email.text;
+                          newUser.phoneNumber = _number.text;
+
+//                          newUser.role = "BO";
+//                          newUser.dob = "";
+//                          newUser.firstName = "";
+//                          newUser.lastName = "";
+//                          newUser.addressLineOne = "";
+//                          newUser.addressLineTwo = "";
+//                          newUser.profileStatus = "";
+//                          newUser.currentLocation = "";
+//                          newUser.country = "";
+//                          newUser.gender = "";
+//                          newUser.postcode = "";
+//
+//                          newUser.businessName = "";
+//                          newUser.businessCategory = "";
+//
+//                          newUser.drivingLicenceEndDate = "";
+//                          newUser.drivingLicenceURL = "";
+
+
+
+                          newUser.phoneNumber = "7912838740";
+
+
+                          _signUp(newUser,_password.text);
                         },
                         splashColor: Colors.black12,
                         borderColor: Color.fromRGBO(59, 89, 152, 1.0),
@@ -175,27 +213,22 @@ class _SignUpScreenState extends State<SignUp> {
     });
   }
 
-  void _signUp(
-      {String fullname,
-        String number,
-        String email,
-        String password,
-        BuildContext context}) async {
-    if (TextValidator.validateName(fullname) &&
-        TextValidator.validateEmail(email) &&
-        TextValidator.validateNumber(number) &&
-        TextValidator.validatePassword(password)) {
+  void _signUp(User newUser,
+        String password) async {
+    print("neforesignupo");
+//    if (TextValidator.validateName(fullname) &&
+//        TextValidator.validateEmail(email) &&
+//        TextValidator.validateNumber(number) &&
+//        TextValidator.validatePassword(password)) {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         _changeBlackVisible();
-        await Auth.signUp(email, password).then((uID) {
-          Auth.addUser(new User(
-              userID: uID,
-              email: email,
-              firstName: fullname,
-              profilePictureURL: ''));
-          onBackPress();
+        await Auth.signUp(newUser.email, password).then((uID) {
+          print("insignup");
+          newUser.userID = uID;
+          Auth.addUser(newUser);
         });
+        onBackPress();
       } catch (e) {
         print("Error in sign up: $e");
         String exception = Auth.getExceptionText(e);
@@ -204,7 +237,7 @@ class _SignUpScreenState extends State<SignUp> {
           content: exception,
           onPressed: _changeBlackVisible,
         );
-      }
+     // }
     }
   }
 

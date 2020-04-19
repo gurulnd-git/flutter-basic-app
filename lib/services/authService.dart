@@ -11,7 +11,40 @@ final GoogleSignIn googleSignIn = GoogleSignIn();
 
 class Auth {
 
+  static void onAuthStateChanged(Function callback) {
+    print("code 01 ");
+    FirebaseAuth.instance.onAuthStateChanged.listen((firebaseUser) {
+      if (firebaseUser == null) {
+        callback(null);
+      } else {
+        callback(Auth.userFromFirebaseUser(firebaseUser));
+      }
+    });
+  }
 
+  static User userFromFirebaseUser(FirebaseUser firebaseUser) {
+    //var isAnon = firebaseUser.isAnonymous;
+    var provider = firebaseUser.providerId;
+   // var name = isAnon ? "Anonim" : firebaseUser.displayName;
+    //var avatar = isAnon ? "https://firebasestorage.googleapis.com/v0/b/gatrabali.appspot.com/o/app%2Favatar.png?alt=media" : firebaseUser.photoUrl;
+
+    if (firebaseUser.providerData.isNotEmpty) {
+      print(firebaseUser.providerData);
+//      var info = firebaseUser.providerData.firstWhere((i) {
+//        return i.displayName != null && i.displayName.trim().length > 0;
+//      });
+//      provider = info.providerId;
+//      name = info.displayName;
+//      avatar = info.photoUrl != null ? info.photoUrl : "https://firebasestorage.googleapis.com/v0/b/gatrabali.appspot.com/o/app%2Favatar.png?alt=media";
+    }
+    User user = new User();
+    //user.fullName=name;
+    user.userID=firebaseUser.uid;
+    user.provider=provider;
+    user.email=firebaseUser.email;
+    //user.profilePictureURL=avatar;
+    return user;
+  }
 
   static Future<String> signIn(String email, String password) async {
     AuthResult result = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
@@ -88,7 +121,9 @@ class Auth {
   }
 
   static void addUser(User user) async {
+    print("inadduser");
     checkUserExist(user.userID).then((value) {
+      print("checkUserExist");
       if (!value) {
         print("user ${user.firstName} ${user.email} added");
         Firestore.instance

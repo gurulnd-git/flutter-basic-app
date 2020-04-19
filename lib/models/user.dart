@@ -1,14 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
-  final String userID;
-  final String firstName;
-  final String email;
-  final String profilePictureURL;
+  String userID;
+  String firstName;
+  String email;
+  String lastName;
+  String fullName;
+  String profilePictureURL;
+  String token;
+  String provider;
+  String phoneNumber;
+  String profileStatus;
+  String age;
+
+  String role;
+  String businessName;
+  String businessCategory;
+  String landLineNumber;
+
+  String drivingLicenceURL;
+  String drivingLicenceEndDate;
+  String dob;
+  String gender;
+  String experience;
+
+  String postcode;
+  String county;
+  String country;
+  String currentLocation;
+  String addressLineOne;
+  String addressLineTwo;
+
 
   User({
     this.userID,
-    this.firstName,
+    this.fullName,
     this.email,
     this.profilePictureURL,
   });
@@ -26,7 +52,7 @@ class User {
   factory User.fromJson(Map<String, Object> doc) {
     User user = new User(
       userID: doc['userID'],
-      firstName: doc['firstName'],
+      fullName: doc['firstName'],
       email: doc['email'],
       profilePictureURL: doc['profilePictureURL'],
     );

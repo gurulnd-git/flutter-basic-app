@@ -209,7 +209,7 @@ class _SignInScreenState extends State<SignIn> {
             .then((uid) => {
             Auth.getCurrentFirebaseUser().then((firebaseUser) {
                   User user = new User(
-                    firstName: firebaseUser.displayName,
+                    fullName: firebaseUser.displayName,
                     userID: firebaseUser.uid,
                     email: firebaseUser.email ?? '',
                     profilePictureURL: firebaseUser.photoUrl ?? '',
