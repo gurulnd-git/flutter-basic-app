@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/services/authService.dart';
 import 'package:settings_ui/settings_ui.dart';
 
-class SettingsScreen extends StatefulWidget {
+class ProfilePage extends StatefulWidget {
   @override
-  _settingsScreenState createState() => _settingsScreenState();
+  _ProfilePageState createState() => _ProfilePageState();
 }
 
-class _settingsScreenState extends State<SettingsScreen> {
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     bool lockInBackground = true;
@@ -20,33 +20,48 @@ class _settingsScreenState extends State<SettingsScreen> {
             ),
             SettingsList(
                 sections: [
-                SettingsSection(
-                title: 'Common',
-                tiles: [
-                SettingsTile(
-                title: 'Language',
-                subtitle: 'English',
-                leading: Icon(Icons.language),
-                onTap: () {
+                  SettingsSection(
+                    title: 'Profile',
+                    tiles: [
+                      SettingsTile(
+                        title: 'Joe Bidem',
+                        subtitle: 'Available for Freelance',
+                        leading: Icon(Icons.account_circle,size: 60,),
+                        onTap: () {
 //                Navigator.of(context).push(MaterialPageRoute(
 //                builder: (BuildContext context) => LanguagesScreen()));
-                },
-                ),
-                SettingsTile(
-                title: 'Environment',
-                subtitle: 'Production',
-                leading: Icon(Icons.cloud_queue)),
-                ],
-                ),
-                SettingsSection(
-                title: 'Account',
-                tiles: [
-                    SettingsTile(title: 'Phone number', leading: Icon(Icons.phone)),
-                    SettingsTile(title: 'Email', leading: Icon(Icons.email)),
-
+                        },
+                      ),
                     ],
-                    ),
-                    SettingsSection(
+                  ),
+                  SettingsSection(
+                  title: 'Manage your profile',
+                  tiles: [
+                  SettingsTile(
+                  title: 'Address Book',
+                  leading: Icon(Icons.bookmark),
+                  onTap: () {
+  //                Navigator.of(context).push(MaterialPageRoute(
+  //                builder: (BuildContext context) => LanguagesScreen()));
+                  },
+                  ),
+                  SettingsTile(
+                  title: 'Payment methods',
+                  leading: Icon(Icons.account_balance_wallet)),
+                  SettingsTile(
+                      title: 'Billing details',
+                      leading: Icon(Icons.account_balance)),
+                  ],
+                  ),
+                  SettingsSection(
+                  title: 'Personal details',
+                  tiles: [
+                      SettingsTile(title: 'Phone number', leading: Icon(Icons.phone)),
+                      SettingsTile(title: 'Email', leading: Icon(Icons.email)),
+
+                      ],
+                      ),
+                  SettingsSection(
                     title: 'Secutiry',
                     tiles: [
                     SettingsTile.switchTile(
@@ -80,6 +95,9 @@ class _settingsScreenState extends State<SettingsScreen> {
                     SettingsTile(
                     title: 'Open source licenses',
                     leading: Icon(Icons.collections_bookmark)),
+                      SettingsTile(
+                          title: 'Logout',
+                          leading: Icon(Icons.exit_to_app)),
                     ],
                     )
                     ],

@@ -216,6 +216,7 @@ class _SignInScreenState extends State<SignIn> {
                   );
                   Auth.addUser(user);
                 }),
+        Navigator.of(context).pop(),
         Navigator.of(context).pushNamed("/root")
            });
       } catch (e) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/walkthrough.dart';
+import 'package:flutter_app/services/userManagement.dart';
 import 'package:flutter_app/ui/widgets/custom_flat_button.dart';
 import "package:flutter_swiper/flutter_swiper.dart";
 import 'package:shared_preferences/shared_preferences.dart';
@@ -153,7 +154,8 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
                   textColor: Colors.white,
                   onPressed: () {
                     widget.prefs.setBool('seen', true);
-                    Navigator.of(context).pushNamed("/root");
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed("/signin");
                   },
                   splashColor: Colors.black12,
                   borderColor: Colors.white,

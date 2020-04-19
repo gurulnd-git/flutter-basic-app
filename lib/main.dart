@@ -2,15 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/auth/SignUp.dart';
-import 'package:flutter_app/screens/auth/landingPage.dart';
 import 'package:flutter_app/screens/auth/phoneLogin.dart';
 import 'package:flutter_app/screens/auth/phoneVerification.dart';
 import 'package:flutter_app/screens/auth/signIn.dart';
 import 'package:flutter_app/screens/main_screen.dart';
 import 'package:flutter_app/screens/walkthrough.dart';
 import 'package:flutter_app/services/authService.dart';
+import 'package:flutter_app/services/userManagement.dart';
 import 'package:flutter_app/shared/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+UserManagement userObj = new UserManagement();
 
 void main()  async {
    // Firestore.instance.settings(timestampsInSnapshotsEnabled: true);
@@ -28,11 +30,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Flutter Demo',
       routes: <String, WidgetBuilder>{
         '/walkthrough': (BuildContext context) => new WalkthroughScreen(),
-        '/root': (BuildContext context) => new LandingPage(),
+        '/root': (BuildContext context) => userObj.handleAuth(),
         '/signin': (BuildContext context) => new SignIn(),
         '/signup': (BuildContext context) => new SignUp(),
         '/main': (BuildContext context) => new MainScreen(),
@@ -49,7 +52,7 @@ class MyApp extends StatelessWidget {
   Widget _screenHandler() {
     bool seen = (prefs.getBool('seen') ?? false);
     if (seen) {
-      return LandingPage();
+      return userObj.handleAuth();
     } else {
       return WalkthroughScreen(prefs: prefs);
     }

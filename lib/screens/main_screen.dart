@@ -18,7 +18,7 @@ class MainScreen extends StatefulWidget {
   final _appBarTitles = [
     Text("Jobs"),
     Text("Post Jobs"),
-    Text("Profile"),
+    Text("Account"),
   ];
 
   _MainScreenState createState() => _MainScreenState();
@@ -36,7 +36,7 @@ class _MainScreenState extends State<MainScreen> {
     _pages = [
       Dashboard(),
       PostJob(),
-      Scaffold(),
+      ProfilePage(),
     ];
     super.initState();
   }
