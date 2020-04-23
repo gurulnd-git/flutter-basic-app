@@ -208,7 +208,9 @@ class _SignInScreenState extends State<SignIn> {
         await Auth.signIn(email, password)
             .then((uid) => {
             Auth.getCurrentFirebaseUser().then((firebaseUser) {
-                  User user = new User(
+              print("firebaseUser.displayName --------- " + firebaseUser.displayName);
+
+              User user = new User(
                     fullName: firebaseUser.displayName,
                     userID: firebaseUser.uid,
                     email: firebaseUser.email ?? '',

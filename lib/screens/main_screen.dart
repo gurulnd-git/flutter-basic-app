@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_app/models/user.dart';
+import 'package:flutter_app/scopedModel/app.dart';
 import 'package:flutter_app/screens/jobListWidget.dart';
 import 'package:flutter_app/screens/postJobs.dart';
 import 'package:flutter_app/screens/profileScreen.dart';
@@ -12,8 +13,9 @@ import 'package:flutter_app/screens/notificationScreen.dart';
 
 class MainScreen extends StatefulWidget {
   final FirebaseUser firebaseUser;
+  final AppModel model;
   User user;
-  MainScreen({this.firebaseUser});
+  MainScreen({this.firebaseUser, this.model});
 
   final _appBarTitles = [
     Text("Jobs"),
@@ -48,6 +50,8 @@ class _MainScreenState extends State<MainScreen> {
     Widget profileIcon = Icon(Icons.account_circle);
     Auth.getCurrentFirebaseUser().then((user) =>{
     //user.isEmailVerified
+
+
       Auth.getUser(user.uid).listen((user)=>{
           if(user.role == "" || user.role == null) {
           print("nnew user doesn't update details")
@@ -129,7 +133,7 @@ class _MainScreenState extends State<MainScreen> {
                           'https://pixel.nymag.com/imgs/daily/vulture/2017/06/14/14-tom-cruise.w700.h700.jpg'))),
 
                       Text(
-                        'Tom Cruise',
+                        getName(),
                         style: TextStyle(
                             fontSize: 25.0,
                             fontWeight: FontWeight.bold,
@@ -244,5 +248,15 @@ class _MainScreenState extends State<MainScreen> {
 
             );
 
+        }
+
+        String getName() {
+
+          if(AppModel.of(context).currentUser !=null )
+          {
+            print(AppModel.of(context).currentUser.fullName);
+           // return AppModel.of(context).currentUser.fullName;
+          }
+          return "Tom Cruise";
         }
       }

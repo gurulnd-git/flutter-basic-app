@@ -3,18 +3,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/scopedModel/app.dart';
 import 'package:flutter_app/screens/auth/welcomePage.dart';
 import 'package:flutter_app/screens/main_screen.dart';
 
 import 'package:rxdart/rxdart.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 
 class UserManagement {
   BehaviorSubject currentUser = BehaviorSubject<String>.seeded("nouser");
 
-  Widget handleAuth() {
+  Widget handleAuth(AppModel model) {
     return new StreamBuilder<FirebaseUser>(
       stream: FirebaseAuth.instance.onAuthStateChanged,
       builder: (BuildContext context, snapshot) {
@@ -29,9 +31,11 @@ class UserManagement {
             authorize(context);
            // if(authorize(context) == true) {
               //Navigator.of(context).pop();
-              return new MainScreen(
-                firebaseUser: snapshot.data,
-              );
+              return  ScopedModel<AppModel>(
+                  model: model,
+                  child: MainScreen(
+                firebaseUser: snapshot.data, model: model,
+              ));
            // }
 //            else {
 //            return new Scaffold(

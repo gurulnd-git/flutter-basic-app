@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/walkthrough.dart';
+import 'package:flutter_app/scopedModel/app.dart';
 import 'package:flutter_app/services/userManagement.dart';
 import 'package:flutter_app/ui/widgets/custom_flat_button.dart';
 import "package:flutter_swiper/flutter_swiper.dart";
@@ -7,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class WalkthroughScreen extends StatefulWidget {
   final SharedPreferences prefs;
+  final AppModel model;
   final List<Walkthrough> pages = [
     Walkthrough(
       icon: Icons.developer_mode,
@@ -27,7 +29,7 @@ class WalkthroughScreen extends StatefulWidget {
     ),
   ];
 
-  WalkthroughScreen({this.prefs});
+  WalkthroughScreen({this.prefs, this.model});
 
   @override
   _WalkthroughScreenState createState() => _WalkthroughScreenState();

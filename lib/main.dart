@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       routes: <String, WidgetBuilder>{
         '/walkthrough': (BuildContext context) => new WalkthroughScreen(),
-        '/root': (BuildContext context) => userObj.handleAuth(),
+        '/root': (BuildContext context) => userObj.handleAuth(this._model),
         '/signin': (BuildContext context) => new SignIn(),
         '/signup': (BuildContext context) => new SignUp(),
         '/main': (BuildContext context) => new MainScreen(),
@@ -60,15 +60,16 @@ class MyApp extends StatelessWidget {
   Widget _screenHandler() {
     bool seen = (prefs.getBool('seen') ?? false);
     if (seen) {
-      return AppController();
+      return AppController(model: this._model);
     } else {
-      return WalkthroughScreen(prefs: prefs);
+      return WalkthroughScreen(prefs: prefs, model: this._model);
     }
   }
 }
 
 class AppController extends StatefulWidget {
-
+  final AppModel model;
+  AppController({this.model});
   @override
   _AppControllerState createState() => _AppControllerState();
 }
@@ -92,7 +93,10 @@ class _AppControllerState extends State<AppController> {
   @override
   Widget build(BuildContext context) {
     print("Auth State change method 0");
-    return userObj.handleAuth();
+    return ScopedModel<AppModel>(
+        model: widget.model,
+        child: userObj.handleAuth(widget.model)
+    );
   }
 }
 

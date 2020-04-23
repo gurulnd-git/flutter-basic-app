@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-
-
 class AppModel extends Model {
   //List<Feed> feeds = <Feed>[];
   User currentUser;
