@@ -31,8 +31,16 @@ class User {
   String addressLineOne;
   String addressLineTwo;
 
+  String documentID;
+  String name;
+  String password;
+  bool isAdmin;
 
   User({
+    this.documentID,
+    this.isAdmin,
+    this.name,
+    this.password,
     this.userID,
     this.fullName,
     this.email,
@@ -61,5 +69,16 @@ class User {
 
   factory User.fromDocument(DocumentSnapshot doc) {
     return User.fromJson(doc.data);
+  }
+
+  factory User.fromFirestore(DocumentSnapshot document) {
+    Map data = document.data;
+
+    return User(
+      documentID: document.documentID,
+      email: data['email'] ?? '',
+      name: data['name'] ?? '',
+      isAdmin: data['isAdmin'] ?? false,
+    );
   }
 }

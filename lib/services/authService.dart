@@ -14,6 +14,7 @@ class Auth {
   static void onAuthStateChanged(Function callback) {
     print("code 01 ");
     FirebaseAuth.instance.onAuthStateChanged.listen((firebaseUser) {
+
       if (firebaseUser == null) {
         callback(null);
       } else {
@@ -69,6 +70,9 @@ class Auth {
     assert(await user.getIdToken() != null);
 
     final FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+    final IdTokenResult idToken = await currentUser.getIdToken(refresh: true);
+    // idToken.claims.addEntries(newEntries);`
+
     assert(user.uid == currentUser.uid);
 
     return 'signInWithGoogle succeeded: $user';

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/walkthrough.dart';
 import 'package:flutter_app/scopedModel/app.dart';
-import 'package:flutter_app/services/userManagement.dart';
+import 'package:flutter_app/utils/navigator.dart';
 import 'package:flutter_app/ui/widgets/custom_flat_button.dart';
+import 'package:flutter_app/utils/get_it.dart';
 import "package:flutter_swiper/flutter_swiper.dart";
 import 'package:shared_preferences/shared_preferences.dart';
-
+SharedPreferences prefs;
 class WalkthroughScreen extends StatefulWidget {
-  final SharedPreferences prefs;
-  final AppModel model;
+  AppModel model;
   final List<Walkthrough> pages = [
     Walkthrough(
       icon: Icons.developer_mode,
@@ -29,13 +29,17 @@ class WalkthroughScreen extends StatefulWidget {
     ),
   ];
 
-  WalkthroughScreen({this.prefs, this.model});
 
   @override
   _WalkthroughScreenState createState() => _WalkthroughScreenState();
 }
 
 class _WalkthroughScreenState extends State<WalkthroughScreen> {
+
+  void initState() {
+    setPref();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,9 +159,8 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
                   fontWeight: FontWeight.w700,
                   textColor: Colors.white,
                   onPressed: () {
-                    widget.prefs.setBool('seen', true);
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed("/signin");
+                    prefs.setBool('seen', true);
+                    locator<NavigationService>().navigateTo('/signin');
                   },
                   splashColor: Colors.black12,
                   borderColor: Colors.white,
@@ -171,5 +174,9 @@ class _WalkthroughScreenState extends State<WalkthroughScreen> {
       ),
     );
     return widgets;
+  }
+
+  setPref() async {
+    prefs = await SharedPreferences.getInstance();
   }
 }

@@ -1,7 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_app/model_providers/theme_provider.dart';
+import 'package:flutter_app/model_providers/users_provider.dart';
+import 'package:flutter_app/model_providers/userx_provider.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/scopedModel/app.dart';
+import 'package:flutter_app/screens/spash_screen.dart';
+import 'package:flutter_app/utils/get_it.dart';
+import 'package:provider/provider.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/screens/auth/SignUp.dart';
@@ -12,59 +19,59 @@ import 'package:flutter_app/screens/main_screen.dart';
 import 'package:flutter_app/screens/walkthrough.dart';
 import 'package:flutter_app/services/authService.dart';
 import 'package:flutter_app/services/userManagement.dart';
+import 'package:flutter_app/utils/navigator.dart';
 import 'package:flutter_app/shared/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 UserManagement userObj = new UserManagement();
 
-void main()  async {
+void main() {
    // Firestore.instance.settings(timestampsInSnapshotsEnabled: true);
   WidgetsFlutterBinding.ensureInitialized();
-  await SharedPreferences.getInstance().then((prefs) {
-    runApp(MyApp(prefs: prefs));
-  });
+  setupLocator();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  runApp(AppStart());
+}
+
+class AppStart extends StatelessWidget {
+  const AppStart({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(providers: [
+      ChangeNotifierProvider(create: (context) => ThemeProvider(isLightTheme: false)),
+      ChangeNotifierProvider(create: (context) => UserxProvider()),
+      ChangeNotifierProvider(create: (context) => UsersProvider()),
+    ], child: MyApp());
+  }
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   final AppModel _model = AppModel();
-  final SharedPreferences prefs;
-  MyApp({this.prefs});
-
-
 
   @override
   Widget build(BuildContext context) {
 
     return MaterialApp(
       title: 'Flutter Demo',
-      routes: <String, WidgetBuilder>{
-        '/walkthrough': (BuildContext context) => new WalkthroughScreen(),
-        '/root': (BuildContext context) => userObj.handleAuth(this._model),
-        '/signin': (BuildContext context) => new SignIn(),
-        '/signup': (BuildContext context) => new SignUp(),
-        '/main': (BuildContext context) => new MainScreen(),
-        '/phonesignin': (BuildContext context) => new phoneLogin(),
-        '/phoneverify': (BuildContext context) => new phoneVerification(),
+      navigatorKey: locator<NavigationService>().navigatorKey,
+      routes: {
+        '/walkthrough': (context) => new WalkthroughScreen(),
+        '/root': (context) => userObj.handleAuth(this._model),
+        '/signin': (context) => new SignIn(),
+        '/signup': (context) => new SignUp(),
+        '/main': (context) => new MainScreen(),
+        '/phonesignin': (context) => new phoneLogin(),
+        '/phoneverify': (context) => new phoneVerification(),
       },
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ScopedModel<AppModel>(
-        model: _model,
-        child: _screenHandler(),
-      ));
+      home: SplashScreenPage()
+    );
   }
-  
 
-  Widget _screenHandler() {
-    bool seen = (prefs.getBool('seen') ?? false);
-    if (seen) {
-      return AppController(model: this._model);
-    } else {
-      return WalkthroughScreen(prefs: prefs, model: this._model);
-    }
-  }
 }
 
 class AppController extends StatefulWidget {
